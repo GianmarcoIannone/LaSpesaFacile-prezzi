@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {eurospinPrices,openPrice,quantity} from '../tools/collect-prices.mjs';
+const card=(name,prices)=>`<li class="product-card"><h3 class="product-card__title">${name}</h3><p class="product-card__meta m-0">100g</p>${prices}</li>`;
+const full='<span>Prezzo Family</span><span class="product-card__price-current">6,99€</span><span class="product-card__price-full">8,49€</span>';
+let out=eurospinPrices(card('Pinoli',full),'2026-10-13');assert.equal(out[0].price,8.49);assert.equal(out[0].priceType,'regular');assert.equal(out[0].originalPrice,null);assert.equal(out[0].qty.value,100);
+out=eurospinPrices(card('Nascosto',''),'2026-10-13');assert.equal(out.length,0);
+out=eurospinPrices(card('Pasta','<span class="product-card__badge-date-value">15/10/2026</span><span class="product-card__price-original">2,00€</span><span class="product-card__price-current">1,00€</span>'),'2026-10-13');assert.equal(out[0].validTo,'2026-10-15');assert.equal(out[0].priceType,'offer');
+const record={id:4,date:'2026-10-10',currency:'EUR',price:1.3,proof_id:12,location_osm_id:23,location_osm_type:'WAY',location:{osm_brand:'Conad',osm_address_country_code:'IT'},product:{product_name:'Pasta',product_quantity:500,product_quantity_unit:'g'}};
+out=openPrice(record,'2026-10-13');assert.equal(out.storeId,'w23');assert.equal(out.priceType,'indicative');assert.equal(out.qty.value,500);
+assert.equal(openPrice({...record,price_is_discounted:true},'2026-10-13'),null);
+assert.equal(openPrice({...record,date:'2026-07-01'},'2026-10-13'),null);
+assert.equal(openPrice({...record,price_per:'KILOGRAM'},'2026-10-13'),null);
+assert.equal(openPrice({...record,location:{...record.location,osm_address_country_code:'FR'}},'2026-10-13'),null);
+assert.equal(quantity('500 g').unit,'g');
+console.log('Collector: prezzo pieno Family, login senza prezzo, scadenze, unità, paese e negozio esatto verificati.');

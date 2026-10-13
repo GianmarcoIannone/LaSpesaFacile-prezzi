@@ -1,0 +1,65 @@
+name: Aggiorna prezzi quotidiani
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-offers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OFFERS_CITY: colleferro
+      OFFERS_CITY_NAME: Colleferro
+    steps:
+      - name: Orario italiano (06:00, inclusa ora legale)
+        id: clock
+        run: |
+          expected="0 5 * * *"
+          if [ "$(TZ=Europe/Rome date +%z)" = "+0200" ]; then expected="0 4 * * *"; fi
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" != "$expected" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Checkout repository
+        if: steps.clock.outputs.enabled == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: steps.clock.outputs.enabled == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Aggiorna dataset offerte
+        if: steps.clock.outputs.enabled == 'true'
+        timeout-minutes: 12
+        continue-on-error: true
+        run: node tools/update-offers.mjs
+
+      - name: Raccogli prezzi pubblicati e osservati
+        if: steps.clock.outputs.enabled == 'true'
+        run: |
+          node tests/prices-feed.test.cjs
+          node tests/price-collector.test.mjs
+          node tools/collect-prices.mjs
+
+      - name: Pubblica il dataset se è cambiato
+        if: steps.clock.outputs.enabled == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add offers-data.json prices-data.json
+          if git diff --cached --quiet; then
+            echo "Nessuna variazione da pubblicare."
+          else
+            git commit -m "Aggiorna prezzi e offerte quotidiani [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi

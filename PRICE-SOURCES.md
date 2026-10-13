@@ -1,0 +1,9 @@
+# Fonti e limiti del listino
+
+- Volantini: https://www.doveconviene.it/colleferro . La raccolta tenta le 18 catene configurate in tools/update-offers.mjs. Una catena senza dati resta senza prezzo. Ambito geografico: Colleferro e dintorni, 75 km; disponibilità e condizioni da verificare nel negozio.
+- Eurospin: https://www.eurospin.com/it-it/prodotti/ . Si leggono solo i prezzi pubblicamente presenti nelle schede HTML. Prezzo pieno se lo sconto richiede carta Family; nessun accesso autenticato o ricostruzione dei prezzi nascosti. Prezzi di sito come riferimento, non prova del prezzo del singolo negozio. Riferimento aggiornato per 14 giorni al massimo.
+- Open Prices: https://github.com/openfoodfacts/open-prices e https://prices.openfoodfacts.org/api/docs . Dati ODbL 1.0: https://opendatacommons.org/licenses/odbl/1-0/ . Attribuzione inclusa nel feed, nell'app e nei link di provenienza. Il listino derivato che include queste osservazioni è distribuito sotto ODbL 1.0; la licenza del codice dell'app resta separata. Vengono usate solo osservazioni EUR italiane con prova, ultime 30 giornate, nella zona raccolta, con filiale OSM precisa. Sconti passati senza prezzo pieno noto esclusi. Nessun nome utente, commento personale o immagine di scontrino viene copiato nel listino.
+
+Ogni record conserva fonte, data, formato quando noto, tipo di prezzo e scadenza di utilizzo. I prezzi dei volantini possono variare fra filiali. I prezzi di ricevuta sono stime, non offerte attive. Un listino non valido non sostituisce la cache; una fonte momentaneamente irraggiungibile conserva solo i suoi prezzi ancora utilizzabili. Quantità in g/l richiedono formati compatibili; una quantità vuota vale una confezione.
+
+La copertura non è l'intero assortimento: vari siti richiedono negozio/account o non pubblicano prezzi ordinari. Conad online è stato esaminato senza autenticazione; non importati prezzi da template o negozi non selezionati.
