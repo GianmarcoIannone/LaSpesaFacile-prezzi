@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "updatedAt": "2026-10-13T22:47:59.995Z",
+  "updatedAt": "2026-10-13T22:53:19.966Z",
   "area": {
     "id": "colleferro",
     "name": "Colleferro e dintorni",
@@ -16,7 +16,7 @@
       "name": "DoveConviene",
       "status": "ok",
       "count": 1122,
-      "date": "2026-10-13T22:47:54.361Z"
+      "date": "2026-10-13T22:53:17.786Z"
     },
     {
       "name": "Eurospin",
