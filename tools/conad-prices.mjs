@@ -41,7 +41,7 @@ export async function collectConad(get,today,{maxPages=500,maxMs=1500000,pause=2
    result.catalog.forEach(p=>seen.set(p.id,p));
    if(categories.length && task.page===1){for(let page=2;page<=result.pages;page++)queue.push({path:task.path,page});expectedPages+=result.pages-1;}
   }catch(e){failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:e.message});
-   if(e.status===429){queue.unshift(task);rateLimits++;if(rateLimits>=2)break;await wait(Math.max(e.retryAfter || 60000,60000));continue;}
+   if(e.status===429){queue.unshift(task);rateLimits++;const delay=Math.max(e.retryAfter || 60000,60000);if(rateLimits>=2 || Date.now()-start+delay>=maxMs)break;await wait(delay);continue;}
    pending.push(task);
   }
   pages++;if(pages%20===0)console.log(`Conad: ${pages}/${expectedPages} pagine, ${seen.size} prodotti, ${failures} errori`);
