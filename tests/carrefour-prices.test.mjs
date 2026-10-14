@@ -16,3 +16,5 @@ console.log('Riferimenti online: prezzo pieno, formato, fonte, validità e prezz
 
 assert.deepEqual(nextPageLinks('<link rel="next" href="https://www.carrefour.it/spesa-online/dolci-e-prima-colazione/caffe/?start=50&amp;sz=50">'),['/spesa-online/dolci-e-prima-colazione/caffe/?start=50&sz=50']);
 assert.deepEqual(nextPageLinks('<link rel="next" href="https://evil.example/spesa-online/dolci-e-prima-colazione/?start=50">'),[]);
+
+assert.deepEqual(nextPageLinks('<div class="show-more-infinity" page-url="https://www.carrefour.it/spesa-online/dolci-e-prima-colazione/caffe/?start=25&amp;sz=25"></div><link rel="next" href="https://www.carrefour.it/spesa-online/dolci-e-prima-colazione/caffe/?start=50&amp;sz=50">'),['/spesa-online/dolci-e-prima-colazione/caffe/?start=25&sz=25']);

@@ -9,3 +9,6 @@ const partial=await collectConad(async url=>{if(url.includes('page=2'))throw Err
 const events=Array.from({length:5},(_,i)=>({'@type':'SaleEvent',url:'https://www.doveconviene.it/x?flyerId='+i,startDate:'2020-01-01',endDate:'2030-01-01',name:'Volantino '+i}));
 assert.equal(flyersFromHtml('<script type="application/ld+json">'+JSON.stringify({itemListElement:events})+'</script>').length,5,'Nessun limite nascosto ai primi tre volantini');
 console.log('Conad: catalogo, prezzi mancanti, paginazione, raccolta parziale e tutti i volantini verificati.');
+
+const department=await collectConad(async url=>url.includes('/c/')?card('2',0):card('1',2.39)+'<a href="/c/caffe--0701">Caffè</a><a data-page="181">181</a>',today,{pause:0});
+assert.equal(department.pages,2);assert.equal(department.catalog.length,2);assert.ok(department.complete,'Il catalogo viene navigato per reparti invece di richiedere 181 pagine globali');

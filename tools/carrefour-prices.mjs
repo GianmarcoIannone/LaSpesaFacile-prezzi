@@ -6,9 +6,10 @@ export function categoryLinks(html){
 }
 export function nextPageLinks(html){
  const urls=[];
- for(const m of html.matchAll(/<link\b[^>]*>/gi)){
-  if(!/rel=["']next["']/i.test(m[0]))continue;
-  try{const url=new URL(decode(m[0].match(/href=["']([^"']+)["']/i)?.[1] || ''),'https://www.carrefour.it');
+ const more=[...html.matchAll(/<div\b[^>]*\bpage-url=["']([^"']+)["'][^>]*>/gi)].map(m=>m[1]);
+ const candidates=more.length?more:[...html.matchAll(/<link\b[^>]*>/gi)].filter(m=>/rel=["']next["']/i.test(m[0])).map(m=>m[0].match(/href=["']([^"']+)["']/i)?.[1]);
+ for(const raw of candidates){
+  try{const url=new URL(decode(raw || ''),'https://www.carrefour.it');
    if(url.origin==='https://www.carrefour.it' && categoryLinks(`<a href="${url.pathname}">`).length && /^\d+$/.test(url.searchParams.get('start') || '') && Number(url.searchParams.get('start'))<=20000)urls.push(url.pathname+url.search);
   }catch{}
  }
