@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {carrefourPrices,categoryLinks} from '../tools/carrefour-prices.mjs';
+const encode=o=>JSON.stringify(o).replace(/"/g,'&quot;');
+const card=(sales,list=null)=>`<div data-pid="123" data-product-json="${encode({id:'123',name:'Zucchero 1 kg',brand:'Carrefour',dimension52:'1000.0 g'})}" data-option-product-price="${encode({sales:{value:sales,currency:'EUR'},list:list?{value:list}:null})}"><a href="/p/zucchero/123.html">Zucchero</a></div>`;
+let out=carrefourPrices(card(1,1.5),'2026-10-14');assert.equal(out[0].price,1.5);assert.equal(out[0].priceType,'indicative');assert.equal(out[0].referenceOnly,true);assert.equal(out[0].chain,'carrefour-online');assert.equal(out[0].qty.value,1000);
+assert.equal(carrefourPrices(card(0),'2026-10-14').length,0);
+assert.equal(carrefourPrices(card(-1),'2026-10-14').length,0);
+const product={ '@type':'Product',sku:'2',name:'Tè',offers:{price:'1.2',priceCurrency:'EUR',priceValidUntil:'2026-10-15',url:'https://www.carrefour.it/p/te/2.html'}};
+const script=p=>`<script type="application/ld+json">${JSON.stringify(p)}</script>`;
+assert.equal(carrefourPrices(script(product),'2026-10-14')[0].price,1.2);
+assert.equal(carrefourPrices(script(product),'2026-10-16').length,0);
+assert.equal(carrefourPrices(script({...product,offers:{...product.offers,url:'https://example.com/'}}),'2026-10-14').length,0);
+assert.deepEqual(categoryLinks('<a href="/spesa-online/carne/bovina/"></a><a href="https://example.com/"></a>'),['/spesa-online/carne/bovina/']);
+console.log('Riferimenti online: prezzo pieno, formato, fonte, validità e prezzi invalidi verificati.');

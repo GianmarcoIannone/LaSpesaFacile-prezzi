@@ -48,6 +48,7 @@ jobs:
         run: |
           node tests/prices-feed.test.cjs
           node tests/price-collector.test.mjs
+          node tests/carrefour-prices.test.mjs
           node tools/collect-prices.mjs
 
       - name: Pubblica il dataset se è cambiato
