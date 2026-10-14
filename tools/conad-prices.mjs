@@ -18,7 +18,7 @@ export function conadPage(html,today){
  const total=Number(html.match(/class="results"[^>]*>\s*([\d.]+)\s+risultati/)?.[1]?.replaceAll('.','')) || null;
  return {catalog,pages,total};
 }
-export async function collectConad(get,today,{maxPages=500,maxMs=1500000,pause=2500,resume=null,previousCatalog=null}={}){
+export async function collectConad(get,today,{maxPages=500,maxMs=1500000,pause=2500,resume=null,previousCatalog=null,wait=ms=>new Promise(r=>setTimeout(r,ms))}={}){
  const start=Date.now(),seen=new Map();let failures=0,pages=0,expectedPages=1;
  const errors=[];
  const firstHtml=await get('https://spesaonline.conad.it/tutti-i-prodotti');
@@ -34,14 +34,14 @@ export async function collectConad(get,today,{maxPages=500,maxMs=1500000,pause=2
  expectedPages+=queue.length;
  while(queue.length && pages<maxPages && Date.now()-start<maxMs){
   const task=queue.shift();
-  await new Promise(r=>setTimeout(r,pause));
+  await wait(pause);
   try{
    const result=conadPage(await get('https://spesaonline.conad.it'+task.path+(task.page>1?'?page='+task.page:'')),today);
    if(!result.catalog.length){pending.push(task);failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:'Pagina senza prodotti'});}
    result.catalog.forEach(p=>seen.set(p.id,p));
    if(categories.length && task.page===1){for(let page=2;page<=result.pages;page++)queue.push({path:task.path,page});expectedPages+=result.pages-1;}
   }catch(e){failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:e.message});
-   if(e.status===429){queue.unshift(task);rateLimits++;if(rateLimits>=2)break;await new Promise(r=>setTimeout(r,Math.max(e.retryAfter || 60000,60000)));continue;}
+   if(e.status===429){queue.unshift(task);rateLimits++;if(rateLimits>=2)break;await wait(Math.max(e.retryAfter || 60000,60000));continue;}
    pending.push(task);
   }
   pages++;if(pages%20===0)console.log(`Conad: ${pages}/${expectedPages} pagine, ${seen.size} prodotti, ${failures} errori`);
