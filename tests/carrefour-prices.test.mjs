@@ -1,3 +1,4 @@
+import {nextPageLinks} from '../tools/carrefour-prices.mjs';
 import assert from 'node:assert/strict';
 import {carrefourPrices,categoryLinks} from '../tools/carrefour-prices.mjs';
 const encode=o=>JSON.stringify(o).replace(/"/g,'&quot;');
@@ -12,3 +13,6 @@ assert.equal(carrefourPrices(script(product),'2026-10-16').length,0);
 assert.equal(carrefourPrices(script({...product,offers:{...product.offers,url:'https://example.com/'}}),'2026-10-14').length,0);
 assert.deepEqual(categoryLinks('<a href="/spesa-online/carne/bovina/"></a><a href="https://example.com/"></a>'),['/spesa-online/carne/bovina/']);
 console.log('Riferimenti online: prezzo pieno, formato, fonte, validità e prezzi invalidi verificati.');
+
+assert.deepEqual(nextPageLinks('<link rel="next" href="https://www.carrefour.it/spesa-online/dolci-e-prima-colazione/caffe/?start=50&amp;sz=50">'),['/spesa-online/dolci-e-prima-colazione/caffe/?start=50&sz=50']);
+assert.deepEqual(nextPageLinks('<link rel="next" href="https://evil.example/spesa-online/dolci-e-prima-colazione/?start=50">'),[]);

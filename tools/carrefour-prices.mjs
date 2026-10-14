@@ -4,6 +4,16 @@ export const roots=['frutta-e-verdura','carne','pesce','salumi-e-formaggi','uova
 export function categoryLinks(html){
  return [...new Set([...html.matchAll(/href="(\/spesa-online\/[^"?#]+\/)"/g)].map(m=>decode(m[1])))].filter(p=>roots.includes(p.split('/')[2]));
 }
+export function nextPageLinks(html){
+ const urls=[];
+ for(const m of html.matchAll(/<link\b[^>]*>/gi)){
+  if(!/rel=["']next["']/i.test(m[0]))continue;
+  try{const url=new URL(decode(m[0].match(/href=["']([^"']+)["']/i)?.[1] || ''),'https://www.carrefour.it');
+   if(url.origin==='https://www.carrefour.it' && categoryLinks(`<a href="${url.pathname}">`).length && /^\d+$/.test(url.searchParams.get('start') || '') && Number(url.searchParams.get('start'))<=20000)urls.push(url.pathname+url.search);
+  }catch{}
+ }
+ return [...new Set(urls)];
+}
 export function carrefourPrices(html,observedAt){
  const out=[];
  // Schede singole di riferimento: si leggono solo offerte strutturate in EUR ancora valide.
@@ -45,17 +55,16 @@ export function carrefourPrices(html,observedAt){
 export async function collectCarrefour(get,today){
  const started=Date.now();
  const queue=['/p/carrefour-classic-zucchero-semolato-bianco-1-kg/8012666009879.html','/p/anguria-sfusa-cat.-i-calibro-7%2F17/2030020000000.html','/p/carrefour-classic-te-verde-filtri-25-x-175-g/3560070231515.html',...roots.map(s=>'/spesa-online/'+s+'/')],seen=new Set(),prices=new Map();let failures=0;
- // Primo livello e sottocategorie pertinenti; niente paginazione illimitata o accessi autenticati.
- const relevant=/frutta\/$|verdura\/$|esotica|aglio|aromi|pomodor|zuccher|soffrit|surgelat|dentifric|piatti|camomilla|te-e|succhi|bibite|merend|cornett|croissant|spalmabil|carne-bovina|tacchino|gamber|cozze|pesce-fresco|piadin|passat|detersiv|cani|gatti|fragol|anguri|caffe|parmig|formagg|ricott|uova|salsicc|salum|farin|miele|biscott|cereal|ammorb|torte|zucca|melanzan|funghi/;
- while(queue.length && seen.size<180 && Date.now()-started<300000){
+ // Tutte le sottocategorie e le pagine pubbliche, con budget esplicito.
+ while(queue.length && seen.size<450 && Date.now()-started<480000){
   const path=queue.shift();if(seen.has(path))continue;seen.add(path);
   try{
    const html=await get('https://www.carrefour.it'+path);
    for(const p of carrefourPrices(html,today))prices.set(p.id,p);
-   for(const link of categoryLinks(html))if(relevant.test(link) && !seen.has(link) && !queue.includes(link))queue.push(link);
+   for(const link of [...categoryLinks(html),...nextPageLinks(html)])if(!seen.has(link) && !queue.includes(link))queue.push(link);
   }catch{failures++;}
   if(seen.size%10===0)console.log(`Carrefour: ${seen.size} pagine, ${prices.size} prezzi, ${failures} errori`);
   await new Promise(r=>setTimeout(r,400));
  }
- return {prices:[...prices.values()],pages:seen.size,failures};
+ return {prices:[...prices.values()],pages:seen.size,failures,complete:!queue.length};
 }

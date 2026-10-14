@@ -90,7 +90,7 @@ export async function collect({flyerFile='offers-data.json',output='prices-data.
   } catch(e){sources.push({name:'Open Prices (ODbL)',status:'unavailable',message:e.message});}
   try {
     const ordinary=await collectCarrefour(url=>get(url,false,8000),today);
-    prices.push(...ordinary.prices);sources.push({name:'Carrefour online',status:ordinary.prices.length?(ordinary.failures?'partial':'ok'):'unavailable',count:ordinary.prices.length,pages:ordinary.pages,failures:ordinary.failures});
+    prices.push(...ordinary.prices);sources.push({name:'Carrefour online',status:ordinary.prices.length?(ordinary.failures || !ordinary.complete?'partial':'ok'):'unavailable',count:ordinary.prices.length,pages:ordinary.pages,failures:ordinary.failures});
   }catch(e){sources.push({name:'Carrefour online',status:'unavailable',message:e.message});}
   try {
     const result=await collectConad(url=>get(url,false,15000),today);
