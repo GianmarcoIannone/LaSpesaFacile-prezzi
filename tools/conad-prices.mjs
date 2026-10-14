@@ -3,7 +3,7 @@ const decode=s=>String(s).replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(+n)).r
 export function conadPage(html,today){
  const catalog=[];
  for(const m of html.matchAll(/data-product="([^"<>]+)"/g))try{
-  const p=JSON.parse(decode(m[1]));if(!p.code || !p.nome)continue;
+  const p=JSON.parse(decode(m[1]));if(!/^\d{1,20}$/.test(String(p.code || '')) || !p.nome)continue;
   const slug=(p.defaultImgSrc || '').match(/\/products\/([^/]+)\//)?.[1];if(!slug)continue;
   const price=typeof p.basePrice==='number' && p.basePrice>0 && p.basePrice<=10000?p.basePrice:null;
   const unit=String(p.netQuantityUm || '').toLowerCase();

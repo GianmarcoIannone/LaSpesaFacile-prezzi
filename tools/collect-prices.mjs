@@ -102,7 +102,7 @@ export async function collect({flyerFile='offers-data.json',output='prices-data.
     const result=await collectConad(url=>get(url,false,15000),today,{resume:previous?.sources?.find(s=>s.name==='Conad online')?.pending,previousCatalog:previous?.catalog});
     catalog=result.catalog;prices.push(...result.prices);
     sources.push({name:'Conad online',status:result.complete?'ok':'partial',count:result.prices.length,catalog:catalog.length,pages:result.pages,expectedPages:result.expectedPages,expectedProducts:result.expectedProducts,failures:result.failures,errors:result.errors,pending:result.pending});
-  }catch(e){sources.push({name:'Conad online',status:'unavailable',message:e.message});}
+  }catch(e){sources.push({name:'Conad online',status:'unavailable',message:e.message,pending:previous?.sources?.find(s=>s.name==='Conad online')?.pending || []});}
   if(sources.some(s=>s.name==='Conad online' && s.status!=='ok')){
     const current=new Set(catalog.map(p=>p.id));catalog.push(...(previous?.catalog || []).filter(p=>p.validTo>=today && !current.has(p.id)));
   }
