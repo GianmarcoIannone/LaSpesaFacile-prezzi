@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {pathToFileURL} from 'node:url';
 
 const AREA_SLUG = (process.env.OFFERS_CITY || 'roma').trim().toLowerCase();
 const AREA_NAME = process.env.OFFERS_CITY_NAME || AREA_SLUG.charAt(0).toUpperCase() + AREA_SLUG.slice(1);
@@ -131,41 +132,24 @@ function isType(node, expected) {
   return typeNames(node).some(type => type.toLowerCase() === expected.toLowerCase());
 }
 
+export function flyersFromHtml(html) {
+  const nodes = extractJsonLd(html);
+  const flyers = [];
+  for (const node of nodes) {
+    if (!isType(node, 'SaleEvent')) continue;
+    const url = absoluteUrl(node.url || node['@id']);
+    if (!url.includes('flyerId=')) continue;
+    flyers.push({id:url.match(/[?&]flyerId=(\d+)/)?.[1] || shortHash(url), title:node.name || 'Volantino',validFrom:toIsoDate(node.startDate),validTo:toIsoDate(node.endDate),url});
+  }
+  const today = new Date().toISOString().slice(0,10);
+  return [...new Map(flyers.filter(f=>(!f.validFrom || f.validFrom<=today) && (!f.validTo || f.validTo>=today)).map(f=>[f.id,f])).values()];
+}
+
 async function discoverFlyers(chain) {
   const url = `https://www.doveconviene.it/${encodeURIComponent(AREA_SLUG)}/volantino/${encodeURIComponent(chain.dc)}`;
   console.log(`[${chain.name}] ricerca volantini: ${url}`);
   const html = await fetchText(url);
-  const nodes = extractJsonLd(html);
-  const flyers = [];
-
-  for (const node of nodes) {
-    if (!(isType(node, 'SaleEvent') || isType(node, 'OfferCatalog'))) continue;
-    const candidates = isType(node, 'OfferCatalog') && Array.isArray(node.itemListElement)
-      ? flattenJsonLd(node.itemListElement, [])
-      : [node];
-
-    for (const item of candidates) {
-      const flyerUrl = absoluteUrl(item.url || item['@id']);
-      if (!flyerUrl || !/volantin|flyer|offert/i.test(flyerUrl)) continue;
-      const idFromUrl = flyerUrl.match(/[?&]flyerId=(\d+)/i)?.[1];
-      flyers.push({
-        id: idFromUrl || shortHash(flyerUrl),
-        title: String(item.name || node.name || `Volantino ${chain.name}`).trim(),
-        validFrom: toIsoDate(item.startDate || node.startDate),
-        validTo: toIsoDate(item.endDate || node.endDate),
-        url: flyerUrl
-      });
-    }
-  }
-
-  const unique = new Map();
-  flyers.forEach(flyer => {
-    if (!unique.has(flyer.id)) unique.set(flyer.id, flyer);
-  });
-
-  return Array.from(unique.values())
-    .sort((a, b) => String(b.validFrom).localeCompare(String(a.validFrom)))
-    .slice(0, 3);
+  return flyersFromHtml(html);
 }
 
 function extractOfferObject(productNode) {
@@ -363,7 +347,7 @@ async function main() {
   console.log(`Durata: ${((Date.now() - startedAt) / 1000).toFixed(1)}s`);
 }
 
-main().catch(error => {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(error => {
   console.error(`Aggiornamento fallito: ${error.message}`);
   process.exitCode = 1;
 });

@@ -12,7 +12,7 @@ permissions:
 jobs:
   update-offers:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     env:
       OFFERS_CITY: colleferro
       OFFERS_CITY_NAME: Colleferro
@@ -49,6 +49,7 @@ jobs:
           node tests/prices-feed.test.cjs
           node tests/price-collector.test.mjs
           node tests/carrefour-prices.test.mjs
+          node tests/conad-prices.test.mjs
           node tools/collect-prices.mjs
 
       - name: Pubblica il dataset se è cambiato

@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import PricesFeed from '../prices-feed.js';
 import {collectCarrefour} from './carrefour-prices.mjs';
+import {collectConad} from './conad-prices.mjs';
 
 const day = date => new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Rome'}).format(new Date(date));
 const plusDays = (date,n) => day(Date.parse(date)+n*86400000);
@@ -66,6 +67,7 @@ async function get(url,json=false,timeout=20000){
 }
 export async function collect({flyerFile='offers-data.json',output='prices-data.json'}={}) {
   const today=day(new Date()),sources=[];
+  let catalog=[];
   const previous=fs.existsSync(output)?JSON.parse(fs.readFileSync(output,'utf8')):null;
   const flyer=JSON.parse(fs.readFileSync(flyerFile,'utf8'));
   let prices=(flyer.offers || []).filter(p=>p.validTo>=today && (!p.validFrom || p.validFrom<=today))
@@ -90,6 +92,14 @@ export async function collect({flyerFile='offers-data.json',output='prices-data.
     const ordinary=await collectCarrefour(url=>get(url,false,8000),today);
     prices.push(...ordinary.prices);sources.push({name:'Carrefour online',status:ordinary.prices.length?(ordinary.failures?'partial':'ok'):'unavailable',count:ordinary.prices.length,pages:ordinary.pages,failures:ordinary.failures});
   }catch(e){sources.push({name:'Carrefour online',status:'unavailable',message:e.message});}
+  try {
+    const result=await collectConad(url=>get(url,false,15000),today);
+    catalog=result.catalog;prices.push(...result.prices);
+    sources.push({name:'Conad online',status:result.complete?'ok':'partial',count:result.prices.length,catalog:catalog.length,pages:result.pages,expectedPages:result.expectedPages,expectedProducts:result.expectedProducts,failures:result.failures});
+  }catch(e){sources.push({name:'Conad online',status:'unavailable',message:e.message});}
+  if(sources.some(s=>s.name==='Conad online' && s.status!=='ok')){
+    const current=new Set(catalog.map(p=>p.id));catalog.push(...(previous?.catalog || []).filter(p=>p.validTo>=today && !current.has(p.id)));
+  }
   // Mantieni solo osservazioni ancora utilizzabili delle fonti temporaneamente assenti.
   const failed=new Set(sources.filter(s=>s.status==='unavailable' || s.status==='partial').map(s=>s.name));
   prices.push(...(previous?.offers || []).filter(p=>failed.has(p.source) && p.validTo>=today));
@@ -99,7 +109,7 @@ export async function collect({flyerFile='offers-data.json',output='prices-data.
   prices=[...unique.values()];
   if(!prices.length) throw new Error('Nessun prezzo utilizzabile: listino precedente preservato');
   const payload={schema:2,updatedAt:new Date().toISOString(),area:{id:'colleferro',name:'Colleferro e dintorni',lat:41.73,lon:13,radiusKm:75},
-    source:{name:'DoveConviene · Eurospin · Open Prices · Carrefour online'},sources,chains:flyer.chains || [],offers:prices};
+    source:{name:'DoveConviene · Eurospin · Open Prices · Carrefour online · Conad online'},catalog,sources,chains:flyer.chains || [],offers:prices};
   PricesFeed.validate(payload);
   fs.writeFileSync(output+'.tmp',JSON.stringify(payload,null,2)+'\n');fs.renameSync(output+'.tmp',output);
   console.log(JSON.stringify({prices:prices.length,sources}));return payload;

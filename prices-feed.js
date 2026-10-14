@@ -19,6 +19,10 @@
           p.qty && (!Number.isFinite(p.qty.value) || p.qty.value<=0 || !['kg','g','gr','ml','cl','l','lt','pz'].includes(p.qty.unit)) ||
           p.unitPrice && (!Number.isFinite(p.unitPrice.value) || !['kg','l','pz'].includes(p.unitPrice.per))) throw new Error('Prezzo non valido');
     }
+    if(data.catalog != null){
+      if(!Array.isArray(data.catalog) || data.catalog.length>20000) throw new Error('Catalogo non valido');
+      for(const p of data.catalog) if(!p || typeof p.id!=='string' || typeof p.name!=='string' || p.name.length>1000 || p.chain!=='conad-online' || p.source!=='Conad online' || !p.referenceOnly || !/^https:\/\/spesaonline\.conad\.it\/p\//.test(p.url || '') || !dateValid(p.observedAt) || !dateValid(p.validTo) || p.price!==null && (!Number.isFinite(p.price) || p.price<=0 || p.price>10000)) throw new Error('Prodotto catalogo non valido');
+    }
     return data;
   }
   function available(data, place, today = new Date().toISOString().slice(0,10)) {
