@@ -18,13 +18,27 @@ export function conadPage(html,today){
  const total=Number(html.match(/class="results"[^>]*>\s*([\d.]+)\s+risultati/)?.[1]?.replaceAll('.','')) || null;
  return {catalog,pages,total};
 }
-export async function collectConad(get,today,{maxPages=400,maxMs=600000,pause=250}={}){
- const start=Date.now(),seen=new Map();let failures=0,pages=0;
- const first=conadPage(await get('https://spesaonline.conad.it/tutti-i-prodotti'),today);
+export async function collectConad(get,today,{maxPages=500,maxMs=900000,pause=500}={}){
+ const start=Date.now(),seen=new Map();let failures=0,pages=0,expectedPages=1;
+ const errors=[];
+ const firstHtml=await get('https://spesaonline.conad.it/tutti-i-prodotti');
+ const first=conadPage(firstHtml,today);
  if(!first.catalog.length)throw new Error('Catalogo Conad pubblico non disponibile');
  first.catalog.forEach(p=>seen.set(p.id,p));pages++;
- let next=2;
- // Due richieste al massimo; limiti e completezza dichiarati nel feed.
- await Promise.all([0,1].map(async()=>{while(next<=Math.min(first.pages,maxPages) && Date.now()-start<maxMs){const page=next++;try{const result=conadPage(await get('https://spesaonline.conad.it/tutti-i-prodotti?page='+page),today);if(!result.catalog.length)failures++;result.catalog.forEach(p=>seen.set(p.id,p));}catch{failures++;}pages++;if(page%20===0)console.log(`Conad: ${page}/${first.pages} pagine, ${seen.size} prodotti`);await new Promise(r=>setTimeout(r,pause));}}));
- const catalog=[...seen.values()];return {catalog,prices:catalog.filter(p=>!p.catalogOnly),pages,expectedPages:first.pages,expectedProducts:first.total,failures,complete:pages===first.pages && !failures && (!first.total || catalog.length>=first.total)};
+ // Navigazione per reparti: l'elenco generale non restituisce tutte le pagine dichiarate.
+ const categories=[...new Set([...firstHtml.matchAll(/href="(\/c\/[^"?]+--\d{4})"/g)].map(m=>decode(m[1])))];
+ const queue=categories.length?categories.map(path=>({path,page:1})) : Array.from({length:first.pages-1},(_,i)=>({path:'/tutti-i-prodotti',page:i+2}));
+ expectedPages+=queue.length;
+ while(queue.length && pages<maxPages && Date.now()-start<maxMs){
+  const task=queue.shift();
+  try{
+   const result=conadPage(await get('https://spesaonline.conad.it'+task.path+(task.page>1?'?page='+task.page:'')),today);
+   if(!result.catalog.length){failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:'Pagina senza prodotti'});}
+   result.catalog.forEach(p=>seen.set(p.id,p));
+   if(categories.length && task.page===1){for(let page=2;page<=result.pages;page++)queue.push({path:task.path,page});expectedPages+=result.pages-1;}
+  }catch(e){failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:e.message});}
+  pages++;if(pages%20===0)console.log(`Conad: ${pages}/${expectedPages} pagine, ${seen.size} prodotti, ${failures} errori`);
+  await new Promise(r=>setTimeout(r,pause));
+ }
+ const catalog=[...seen.values()];return {catalog,prices:catalog.filter(p=>!p.catalogOnly),pages,expectedPages,expectedProducts:first.total,failures,errors,complete:!queue.length && !failures && (!first.total || catalog.length>=first.total)};
 }

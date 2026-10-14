@@ -5,6 +5,12 @@ on:
     - cron: '0 4 * * *'
     - cron: '0 5 * * *'
   workflow_dispatch:
+    inputs:
+      source:
+        description: Raccolta da eseguire
+        type: choice
+        default: all
+        options: [all, conad]
 
 permissions:
   contents: write
@@ -14,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
+      PRICE_SOURCE: ${{ inputs.source || 'all' }}
       OFFERS_CITY: colleferro
       OFFERS_CITY_NAME: Colleferro
     steps:
@@ -38,7 +45,7 @@ jobs:
           node-version: 22
 
       - name: Aggiorna dataset offerte
-        if: steps.clock.outputs.enabled == 'true'
+        if: steps.clock.outputs.enabled == 'true' && env.PRICE_SOURCE != 'conad'
         timeout-minutes: 12
         continue-on-error: true
         run: node tools/update-offers.mjs

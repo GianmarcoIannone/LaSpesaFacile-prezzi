@@ -68,10 +68,15 @@ async function get(url,json=false,timeout=20000){
 export async function collect({flyerFile='offers-data.json',output='prices-data.json'}={}) {
   const today=day(new Date()),sources=[];
   let catalog=[];
+  const conadOnly=process.env.PRICE_SOURCE==='conad';
   const previous=fs.existsSync(output)?JSON.parse(fs.readFileSync(output,'utf8')):null;
   const flyer=JSON.parse(fs.readFileSync(flyerFile,'utf8'));
   let prices=(flyer.offers || []).filter(p=>p.validTo>=today && (!p.validFrom || p.validFrom<=today))
     .map(p=>({...p,priceType:'offer',observedAt:day(flyer.updatedAt),scope:'area',originalPrice:null,discountPct:null,qty:p.qty || quantity(p.rawName || p.name)}));
+  if(conadOnly){
+    prices=(previous?.offers || []).filter(p=>p.source!=='Conad online' && p.validTo>=today);
+    sources.push(...(previous?.sources || []).filter(s=>s.name!=='Conad online'));
+  } else {
   sources.push({name:'DoveConviene',status:prices.length?'ok':'empty',count:prices.length,date:flyer.updatedAt});
   try {
     const ordinary=eurospinPrices(await get('https://www.eurospin.com/it-it/prodotti/'),today);
@@ -92,10 +97,11 @@ export async function collect({flyerFile='offers-data.json',output='prices-data.
     const ordinary=await collectCarrefour(url=>get(url,false,8000),today);
     prices.push(...ordinary.prices);sources.push({name:'Carrefour online',status:ordinary.prices.length?(ordinary.failures || !ordinary.complete?'partial':'ok'):'unavailable',count:ordinary.prices.length,pages:ordinary.pages,failures:ordinary.failures});
   }catch(e){sources.push({name:'Carrefour online',status:'unavailable',message:e.message});}
+  }
   try {
     const result=await collectConad(url=>get(url,false,15000),today);
     catalog=result.catalog;prices.push(...result.prices);
-    sources.push({name:'Conad online',status:result.complete?'ok':'partial',count:result.prices.length,catalog:catalog.length,pages:result.pages,expectedPages:result.expectedPages,expectedProducts:result.expectedProducts,failures:result.failures});
+    sources.push({name:'Conad online',status:result.complete?'ok':'partial',count:result.prices.length,catalog:catalog.length,pages:result.pages,expectedPages:result.expectedPages,expectedProducts:result.expectedProducts,failures:result.failures,errors:result.errors});
   }catch(e){sources.push({name:'Conad online',status:'unavailable',message:e.message});}
   if(sources.some(s=>s.name==='Conad online' && s.status!=='ok')){
     const current=new Set(catalog.map(p=>p.id));catalog.push(...(previous?.catalog || []).filter(p=>p.validTo>=today && !current.has(p.id)));
