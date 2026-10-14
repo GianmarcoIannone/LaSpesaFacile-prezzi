@@ -5,6 +5,11 @@ const payload={schema:2,updatedAt:'2026-10-13T12:00:00Z',area:{lat:41.73,lon:13,
 ]};
 (async()=>{
  assert.equal(Feed.validate(payload),payload);
+ const product={id:'conad-online-1',name:'Capsule',price:null,catalogOnly:true,priceType:'indicative',referenceChain:'conad',chain:'conad-online',source:'Conad online',referenceOnly:true,url:'https://spesaonline.conad.it/p/capsule--1',observedAt:'2026-10-13',validTo:'2026-10-20'};
+ assert.ok(Feed.validate({...payload,catalog:[product]}));
+ assert.throws(()=>Feed.validate({...payload,catalog:[{...product,price:0}]}));
+ assert.throws(()=>Feed.validate({...payload,catalog:[{...product,url:'https://evil.example/product'}]}));
+
  assert.throws(()=>Feed.validate({...payload,offers:[{...payload.offers[0],price:-1}]}));
  assert.throws(()=>Feed.validate({...payload,offers:[{...payload.offers[0],validTo:'2026-02-31'}]}));
  assert.throws(()=>Feed.validate({...payload,offers:[{...payload.offers[0],originalPrice:'2.00'}]}));

@@ -141,7 +141,7 @@ export function flyersFromHtml(html) {
     if (!url.includes('flyerId=')) continue;
     flyers.push({id:url.match(/[?&]flyerId=(\d+)/)?.[1] || shortHash(url), title:node.name || 'Volantino',validFrom:toIsoDate(node.startDate),validTo:toIsoDate(node.endDate),url});
   }
-  const today = new Date().toISOString().slice(0,10);
+  const today = new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Rome'}).format(new Date());
   return [...new Map(flyers.filter(f=>(!f.validFrom || f.validFrom<=today) && (!f.validTo || f.validTo>=today)).map(f=>[f.id,f])).values()];
 }
 

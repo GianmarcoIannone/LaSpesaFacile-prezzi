@@ -6,7 +6,7 @@
 
 Ogni record conserva fonte, data, formato quando noto, tipo di prezzo e scadenza di utilizzo. I prezzi dei volantini possono variare fra filiali. I prezzi di ricevuta sono stime, non offerte attive. Un listino non valido non sostituisce la cache; una fonte momentaneamente irraggiungibile conserva solo i suoi prezzi ancora utilizzabili. Quantità in g/l richiedono formati compatibili; una quantità vuota vale una confezione.
 
-La copertura non è l'intero assortimento: vari siti richiedono negozio/account o non pubblicano prezzi ordinari. Conad online è stato esaminato senza autenticazione; non importati prezzi da template o negozi non selezionati.
+La copertura non è l'intero assortimento: vari siti richiedono negozio/account o non pubblicano prezzi ordinari. Conad online: importati esclusivamente i prezzi base pubblicamente valorizzati; mai ricostruiti prezzi nascosti o attribuiti a negozi non selezionati.
 
 - Carrefour online: categorie pubbliche e tre schede di riferimento, massimo 180 pagine e cinque minuti per raccolta, pausa di 400 ms. Solo prezzi strutturati EUR positivi, prezzo pieno preferito allo sconto, formato del sito e link conservati. Riferimenti indicativi nazionali per la stima: non vengono attribuiti a filiali Carrefour Market/Express né usati per consigliare un negozio come più economico. Scadenza massima 14 giorni; in raccolte parziali restano solo riferimenti precedenti ancora validi, senza aggiornarne la data. Le schede senza prezzo restano escluse.
 

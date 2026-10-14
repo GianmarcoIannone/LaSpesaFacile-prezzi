@@ -21,7 +21,7 @@
     }
     if(data.catalog != null){
       if(!Array.isArray(data.catalog) || data.catalog.length>20000) throw new Error('Catalogo non valido');
-      for(const p of data.catalog) if(!p || typeof p.id!=='string' || typeof p.name!=='string' || p.name.length>1000 || p.chain!=='conad-online' || p.source!=='Conad online' || !p.referenceOnly || !/^https:\/\/spesaonline\.conad\.it\/p\//.test(p.url || '') || !dateValid(p.observedAt) || !dateValid(p.validTo) || p.price!==null && (!Number.isFinite(p.price) || p.price<=0 || p.price>10000)) throw new Error('Prodotto catalogo non valido');
+      for(const p of data.catalog) if(!p || typeof p.id!=='string' || typeof p.name!=='string' || p.name.length>1000 || p.chain!=='conad-online' || p.referenceChain!=='conad' || p.priceType!=='indicative' || p.catalogOnly!==(p.price===null) || p.source!=='Conad online' || !p.referenceOnly || !/^https:\/\/spesaonline\.conad\.it\/p\//.test(p.url || '') || !dateValid(p.observedAt) || !dateValid(p.validTo) || p.price!==null && (!Number.isFinite(p.price) || p.price<=0 || p.price>10000)) throw new Error('Prodotto catalogo non valido');
     }
     return data;
   }
