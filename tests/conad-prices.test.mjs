@@ -20,3 +20,5 @@ assert.ok(waits.includes(90000));assert.ok(recovered.complete);assert.equal(reco
 const limited=await collectConad(async url=>{if(url.includes('/c/'))throw rateLimit();return card('1',2)+'<a href="/c/caffe--0701">Caffè</a>';},today,{pause:0,wait:async()=>{}});
 assert.ok(!limited.complete);assert.equal(limited.pending.length,1);
 const resumed=await collectConad(async url=>url.includes('/c/')?card('2',0):card('1',2),today,{pause:0,resume:limited.pending,previousCatalog:[{...limited.catalog[0],id:'old',validTo:'2026-10-30'}]});assert.equal(resumed.catalog.length,3);assert.ok(resumed.complete);
+
+assert.equal(flyersFromHtml('<script type="application/ld+json">'+JSON.stringify({'@type':'Article',mainEntity:{makesOffer:{'@type':'Offer',url:'https://www.doveconviene.it/x?flyerId=999',validFrom:'2020-01-01',validThrough:'2030-01-01'}}})+'</script>').length,1,'Supporta anche i volantini makesOffer annidati');

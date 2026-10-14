@@ -73,6 +73,8 @@ function flattenJsonLd(value, out = []) {
   if (Array.isArray(value['@graph'])) flattenJsonLd(value['@graph'], out);
   if (Array.isArray(value.itemListElement)) flattenJsonLd(value.itemListElement, out);
   if (value.item && typeof value.item === 'object') flattenJsonLd(value.item, out);
+  if (value.mainEntity) flattenJsonLd(value.mainEntity, out);
+  if (value.makesOffer) flattenJsonLd(value.makesOffer, out);
   return out;
 }
 
@@ -136,10 +138,10 @@ export function flyersFromHtml(html) {
   const nodes = extractJsonLd(html);
   const flyers = [];
   for (const node of nodes) {
-    if (!isType(node, 'SaleEvent')) continue;
+    if (!['SaleEvent','OfferCatalog','Offer'].some(type=>isType(node,type))) continue;
     const url = absoluteUrl(node.url || node['@id']);
     if (!url.includes('flyerId=')) continue;
-    flyers.push({id:url.match(/[?&]flyerId=(\d+)/)?.[1] || shortHash(url), title:node.name || 'Volantino',validFrom:toIsoDate(node.startDate),validTo:toIsoDate(node.endDate),url});
+    flyers.push({id:url.match(/[?&]flyerId=(\d+)/)?.[1] || shortHash(url), title:node.name || 'Volantino',validFrom:toIsoDate(node.startDate || node.validFrom),validTo:toIsoDate(node.endDate || node.validThrough),url});
   }
   const today = new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Rome'}).format(new Date());
   return [...new Map(flyers.filter(f=>(!f.validFrom || f.validFrom<=today) && (!f.validTo || f.validTo>=today)).map(f=>[f.id,f])).values()];
