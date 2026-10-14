@@ -18,7 +18,7 @@ export function conadPage(html,today){
  const total=Number(html.match(/class="results"[^>]*>\s*([\d.]+)\s+risultati/)?.[1]?.replaceAll('.','')) || null;
  return {catalog,pages,total};
 }
-export async function collectConad(get,today,{maxPages=500,maxMs=900000,pause=500}={}){
+export async function collectConad(get,today,{maxPages=500,maxMs=1500000,pause=2500,resume=null,previousCatalog=null}={}){
  const start=Date.now(),seen=new Map();let failures=0,pages=0,expectedPages=1;
  const errors=[];
  const firstHtml=await get('https://spesaonline.conad.it/tutti-i-prodotti');
@@ -27,18 +27,24 @@ export async function collectConad(get,today,{maxPages=500,maxMs=900000,pause=50
  first.catalog.forEach(p=>seen.set(p.id,p));pages++;
  // Navigazione per reparti: l'elenco generale non restituisce tutte le pagine dichiarate.
  const categories=[...new Set([...firstHtml.matchAll(/href="(\/c\/[^"?]+--\d{4})"/g)].map(m=>decode(m[1])))];
- const queue=categories.length?categories.map(path=>({path,page:1})) : Array.from({length:first.pages-1},(_,i)=>({path:'/tutti-i-prodotti',page:i+2}));
+ const resumable=Array.isArray(resume) && resume.length && resume.every(t=>/^\/c\/[^?]+--\d{4}$/.test(t.path) && Number.isInteger(t.page) && t.page>0 && t.page<=50);
+ if(resumable) for(const p of previousCatalog || [])if(p.validTo>=today && !seen.has(p.id))seen.set(p.id,p);
+ const queue=resumable?[...resume]:categories.length?categories.map(path=>({path,page:1})) : Array.from({length:first.pages-1},(_,i)=>({path:'/tutti-i-prodotti',page:i+2}));
+ const pending=[];let rateLimits=0;
  expectedPages+=queue.length;
  while(queue.length && pages<maxPages && Date.now()-start<maxMs){
   const task=queue.shift();
+  await new Promise(r=>setTimeout(r,pause));
   try{
    const result=conadPage(await get('https://spesaonline.conad.it'+task.path+(task.page>1?'?page='+task.page:'')),today);
-   if(!result.catalog.length){failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:'Pagina senza prodotti'});}
+   if(!result.catalog.length){pending.push(task);failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:'Pagina senza prodotti'});}
    result.catalog.forEach(p=>seen.set(p.id,p));
    if(categories.length && task.page===1){for(let page=2;page<=result.pages;page++)queue.push({path:task.path,page});expectedPages+=result.pages-1;}
-  }catch(e){failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:e.message});}
+  }catch(e){failures++;if(errors.length<10)errors.push({path:task.path,page:task.page,message:e.message});
+   if(e.status===429){queue.unshift(task);rateLimits++;if(rateLimits>=2)break;await new Promise(r=>setTimeout(r,Math.max(e.retryAfter || 60000,60000)));continue;}
+   pending.push(task);
+  }
   pages++;if(pages%20===0)console.log(`Conad: ${pages}/${expectedPages} pagine, ${seen.size} prodotti, ${failures} errori`);
-  await new Promise(r=>setTimeout(r,pause));
  }
- const catalog=[...seen.values()];return {catalog,prices:catalog.filter(p=>!p.catalogOnly),pages,expectedPages,expectedProducts:first.total,failures,errors,complete:!queue.length && !failures && (!first.total || catalog.length>=first.total)};
+ const catalog=[...seen.values()];return {catalog,prices:catalog.filter(p=>!p.catalogOnly),pages,expectedPages,expectedProducts:first.total,failures,errors,pending:[...new Map([...pending,...queue].map(t=>[t.path+'?page='+t.page,t])).values()],complete:!queue.length && !pending.length && (!first.total || catalog.length>=first.total)};
 }

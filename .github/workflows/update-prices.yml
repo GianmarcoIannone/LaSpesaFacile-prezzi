@@ -12,13 +12,17 @@ on:
         default: all
         options: [all, conad]
 
+concurrency:
+  group: price-collection
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
 jobs:
   update-offers:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     env:
       PRICE_SOURCE: ${{ inputs.source || 'all' }}
       OFFERS_CITY: colleferro

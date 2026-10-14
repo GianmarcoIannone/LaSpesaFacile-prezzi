@@ -62,7 +62,7 @@ export function openPrice(record,today=day(new Date())) {
 }
 async function get(url,json=false,timeout=20000){
   const response=await fetch(url,{headers:{'User-Agent':'LaSpesaFacile/2.13 public-price-collector','Accept':json?'application/json':'text/html'},signal:AbortSignal.timeout(timeout)});
-  if(!response.ok) throw new Error(`HTTP ${response.status}`);
+  if(!response.ok){const error=new Error(`HTTP ${response.status}`);error.status=response.status;const retry=response.headers.get('retry-after');error.retryAfter=retry && /^\d+$/.test(retry)?Number(retry)*1000:retry?Math.max(0,Date.parse(retry)-Date.now()):60000;throw error;}
   return json?response.json():response.text();
 }
 export async function collect({flyerFile='offers-data.json',output='prices-data.json'}={}) {
@@ -99,9 +99,9 @@ export async function collect({flyerFile='offers-data.json',output='prices-data.
   }catch(e){sources.push({name:'Carrefour online',status:'unavailable',message:e.message});}
   }
   try {
-    const result=await collectConad(url=>get(url,false,15000),today);
+    const result=await collectConad(url=>get(url,false,15000),today,{resume:conadOnly ? previous?.sources?.find(s=>s.name==='Conad online')?.pending : null,previousCatalog:conadOnly ? previous?.catalog : null});
     catalog=result.catalog;prices.push(...result.prices);
-    sources.push({name:'Conad online',status:result.complete?'ok':'partial',count:result.prices.length,catalog:catalog.length,pages:result.pages,expectedPages:result.expectedPages,expectedProducts:result.expectedProducts,failures:result.failures,errors:result.errors});
+    sources.push({name:'Conad online',status:result.complete?'ok':'partial',count:result.prices.length,catalog:catalog.length,pages:result.pages,expectedPages:result.expectedPages,expectedProducts:result.expectedProducts,failures:result.failures,errors:result.errors,pending:result.pending});
   }catch(e){sources.push({name:'Conad online',status:'unavailable',message:e.message});}
   if(sources.some(s=>s.name==='Conad online' && s.status!=='ok')){
     const current=new Set(catalog.map(p=>p.id));catalog.push(...(previous?.catalog || []).filter(p=>p.validTo>=today && !current.has(p.id)));
