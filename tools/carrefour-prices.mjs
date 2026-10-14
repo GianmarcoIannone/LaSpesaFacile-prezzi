@@ -46,8 +46,8 @@ export async function collectCarrefour(get,today){
  const started=Date.now();
  const queue=['/p/carrefour-classic-zucchero-semolato-bianco-1-kg/8012666009879.html','/p/anguria-sfusa-cat.-i-calibro-7%2F17/2030020000000.html','/p/carrefour-classic-te-verde-filtri-25-x-175-g/3560070231515.html',...roots.map(s=>'/spesa-online/'+s+'/')],seen=new Set(),prices=new Map();let failures=0;
  // Primo livello e sottocategorie pertinenti; niente paginazione illimitata o accessi autenticati.
- const relevant=/frutta\/$|verdura\/$|esotica|aglio|aromi|pomodor|zuccher|soffrit|surgelat|dentifric|piatti|camomilla|te-e|succhi|bibite|merend|cornett|croissant|spalmabil|carne-bovina|tacchino|gamber|cozze|pesce-fresco|piadin|passat|detersiv|cani|gatti|fragol|anguri/;
- while(queue.length && seen.size<100 && Date.now()-started<300000){
+ const relevant=/frutta\/$|verdura\/$|esotica|aglio|aromi|pomodor|zuccher|soffrit|surgelat|dentifric|piatti|camomilla|te-e|succhi|bibite|merend|cornett|croissant|spalmabil|carne-bovina|tacchino|gamber|cozze|pesce-fresco|piadin|passat|detersiv|cani|gatti|fragol|anguri|caffe|parmig|formagg|ricott|uova|salsicc|salum|farin|miele|biscott|cereal|ammorb|torte|zucca|melanzan|funghi/;
+ while(queue.length && seen.size<180 && Date.now()-started<300000){
   const path=queue.shift();if(seen.has(path))continue;seen.add(path);
   try{
    const html=await get('https://www.carrefour.it'+path);
