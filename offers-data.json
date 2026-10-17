@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-10-16T08:55:40.995Z",
+  "updatedAt": "2026-10-17T08:27:39.045Z",
   "area": {
     "id": "colleferro",
     "name": "Colleferro"
@@ -9,7 +9,7 @@
     "name": "DoveConviene",
     "url": "https://www.doveconviene.it/colleferro"
   },
-  "contentHash": "f6fdf9c1cb42e547",
+  "contentHash": "36ca2be39efc871a",
   "chains": [
     {
       "slug": "conad",
@@ -31982,7 +31982,7 @@
       "url": "https://www.doveconviene.it/colleferro/discount/lidl/volantino/ultime-offerte-lidl?flyerId=1716720&flyerPage=1"
     },
     {
-      "id": "e1808e6a767fc01c",
+      "id": "039b2e818df74c7f",
       "source": "doveconviene",
       "chain": "lidl",
       "chainName": "Lidl",
@@ -31990,9 +31990,9 @@
       "flyerTitle": "XXL",
       "validFrom": "2026-10-15",
       "validTo": "2026-10-21",
-      "name": "Hotel Montcarlo",
+      "name": "Hotel Montecarlo",
       "brand": null,
-      "rawName": "Hotel Montcarlo",
+      "rawName": "Hotel Montecarlo",
       "price": 123,
       "originalPrice": null,
       "discountPct": null,
