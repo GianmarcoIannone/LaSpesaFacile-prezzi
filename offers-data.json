@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-22T13:09:44.418Z",
+  "updatedAt": "2026-11-23T15:46:27.444Z",
   "area": {
     "id": "colleferro",
     "name": "Colleferro"
@@ -9,7 +9,7 @@
     "name": "DoveConviene",
     "url": "https://www.doveconviene.it/colleferro"
   },
-  "contentHash": "c974f6a9172ed8a0",
+  "contentHash": "5e16d79a622e604b",
   "chains": [
     {
       "slug": "coop",
@@ -150,14 +150,6 @@
           "validTo": "2026-11-29",
           "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751679&flyerPage=1",
           "products": 100
-        },
-        {
-          "id": "1751678",
-          "title": "FRESCHE OFFERTE DELLA SETTIMANA",
-          "validFrom": "2026-11-16",
-          "validTo": "2026-11-22",
-          "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1",
-          "products": 9
         }
       ]
     },
@@ -3096,46 +3088,6 @@
       "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751677&flyerPage=1"
     },
     {
-      "id": "ea4c953e576e1a81",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Zucca Butternut",
-      "brand": null,
-      "rawName": "Zucca Butternut",
-      "price": 0.99,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "bevande",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
-    },
-    {
-      "id": "445ce2ba7e6c9321",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Cipolle Dorate",
-      "brand": null,
-      "rawName": "Cipolle Dorate",
-      "price": 0.99,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "bevande",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
-    },
-    {
       "id": "1de955d0f4c4c24f",
       "source": "doveconviene",
       "chain": "lidl",
@@ -5956,26 +5908,6 @@
       "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751677&flyerPage=1"
     },
     {
-      "id": "9db4058e7abd7279",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Patate Dolci",
-      "brand": null,
-      "rawName": "Patate Dolci",
-      "price": 1.29,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "ortofrutta",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
-    },
-    {
       "id": "053f8d860ac8202c",
       "source": "doveconviene",
       "chain": "lidl",
@@ -6974,26 +6906,6 @@
       "unitPrice": null,
       "category": "bevande",
       "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751677&flyerPage=1"
-    },
-    {
-      "id": "22cb204f5bcb9c73",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Finocchi",
-      "brand": null,
-      "rawName": "Finocchi",
-      "price": 1.39,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "dispensa",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
     },
     {
       "id": "790d69e1fe249a40",
@@ -13394,26 +13306,6 @@
       "unitPrice": null,
       "category": "latticini",
       "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751677&flyerPage=1"
-    },
-    {
-      "id": "15380bc2b3349223",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Pere Conference",
-      "brand": null,
-      "rawName": "Pere Conference",
-      "price": 1.99,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "dispensa",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
     },
     {
       "id": "ed098d33c4781730",
@@ -20456,26 +20348,6 @@
       "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751677&flyerPage=1"
     },
     {
-      "id": "0c76b99d8dde3a9c",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Avocado Hass",
-      "brand": null,
-      "rawName": "Avocado Hass",
-      "price": 2.99,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "dispensa",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
-    },
-    {
       "id": "b14c8858b82e61a1",
       "source": "doveconviene",
       "chain": "lidl",
@@ -22296,26 +22168,6 @@
       "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751677&flyerPage=1"
     },
     {
-      "id": "b76b65d25eec6264",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Funghi Champignon",
-      "brand": null,
-      "rawName": "Funghi Champignon",
-      "price": 3.49,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "dispensa",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
-    },
-    {
       "id": "fea8279851bf8ae1",
       "source": "doveconviene",
       "chain": "lidl",
@@ -22954,26 +22806,6 @@
       "unitPrice": null,
       "category": "bevande",
       "url": "https://www.doveconviene.it/colleferro/iper-e-super/carrefour-express/volantino/ultime-offerte-carrefour-express?flyerId=1751672&flyerPage=1"
-    },
-    {
-      "id": "e487956769a5b656",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Uva Bianca Senza Autumn Crisp",
-      "brand": "Semi",
-      "rawName": "Semi - Uva Bianca Senza Autumn Crisp",
-      "price": 3.69,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "dispensa",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
     },
     {
       "id": "3ea35e47c0aca3fa",
@@ -26734,26 +26566,6 @@
       "unitPrice": null,
       "category": "dispensa",
       "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751679&flyerPage=1"
-    },
-    {
-      "id": "3f8825e383f66750",
-      "source": "doveconviene",
-      "chain": "eurospin",
-      "chainName": "Eurospin",
-      "flyerId": "1751678",
-      "flyerTitle": "FRESCHE OFFERTE DELLA SETTIMANA",
-      "validFrom": "2026-11-16",
-      "validTo": "2026-11-22",
-      "name": "Castagne",
-      "brand": null,
-      "rawName": "Castagne",
-      "price": 4.99,
-      "originalPrice": null,
-      "discountPct": null,
-      "qty": null,
-      "unitPrice": null,
-      "category": "dispensa",
-      "url": "https://www.doveconviene.it/colleferro/discount/eurospin/volantino/ultime-offerte-eurospin?flyerId=1751678&flyerPage=1"
     },
     {
       "id": "dc34d79f153e0fcb",
